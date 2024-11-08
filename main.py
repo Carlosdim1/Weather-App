@@ -1,5 +1,9 @@
+from interface import WeatherApp
+
+
 def main():
-    pass
+    app = WeatherApp()
+    app.run()
 
 
 if __name__ == "__main__":
