@@ -1,3 +1,8 @@
+"""
+Interface module.
+This module contains classes and functions to create a simple GUI to
+show the weather of a city using the OpenWeatherMap API.
+"""
 import customtkinter
 
 
@@ -5,8 +10,8 @@ class WeatherApp():
     """Weather App class"""
 
     def __init__(self):
-
         # Creating main window
+
         customtkinter.set_appearance_mode("dark")
         customtkinter.set_default_color_theme("dark-blue")
         self.root = customtkinter.CTk()
@@ -36,12 +41,28 @@ class WeatherApp():
             master=text_frame, text="Get Weather", command=self.get_weather)
         button.pack(pady=10, padx=10)
 
-        weather_frame = customtkinter.CTkFrame(master=frame)
-        weather_frame.pack(pady=6, padx=5, fill="x")
+        self.weather_frame = customtkinter.CTkFrame(master=frame)
+        self.weather_frame.pack(pady=6, padx=5, fill="x")
+
+        label3 = customtkinter.CTkLabel(
+            master=self.weather_frame, text="Weather", font=("Arial", 16))
+        label3.pack(pady=1, padx=10)
 
     def get_weather(self):
         """Calls the API to get the weather"""
-        pass
+        city_name = self.entry.get()
+        if city_name:
+            # Call the API
+            print(f"Getting weather for {city_name}")
+            # Call Generate label function
+            self.generate_label(city_name)
+
+    def generate_label(self, text):
+        """Generates a label with the given text inside weather_frame"""
+
+        label = customtkinter.CTkLabel(
+            master=self.weather_frame, text=text, font=("Arial", 16))
+        label.pack(pady=1, padx=10)
 
     def run(self):
         """run the app"""
