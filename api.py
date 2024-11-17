@@ -43,11 +43,10 @@ def get_forecast(city):
 
 
 # Example usage
-"""
-if __name__ == "__main__":
+
+# if __name__ == "__main__":
     # In Python, constants are typically written in all uppercase
     # letters with underscores separating words, as per PEP 8 style guide
-    CITY = "Valencia"
-    print(get_current_weather(CITY))
-    print(get_forecast(CITY))
-"""
+#    CITY = "Valencia"
+#    print(get_current_weather(CITY))
+#    print(get_forecast(CITY))
