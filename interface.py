@@ -4,12 +4,16 @@ This module contains classes and functions to create a simple GUI to
 show the weather of a city using the OpenWeatherMap API.
 """
 import customtkinter
+from PIL import Image
+from api import get_current_weather, get_forecast, get_image
 
 
 class WeatherApp():
     """Weather App class"""
 
     def __init__(self):
+
+        self.image = Image.open("icons/sunny.jpg")
         # Creating main window
 
         customtkinter.set_appearance_mode("dark")
@@ -21,12 +25,12 @@ class WeatherApp():
         frame = customtkinter.CTkFrame(master=self.root)
         frame.pack(pady=10, padx=15, fill="both", expand=True)
 
-        # Crear y configurar los widgets
+        # create and configure widgets
         label = customtkinter.CTkLabel(
             master=frame, text="Weather App", font=("Arial", 20))
         label.pack(pady=12, padx=10)
 
-        # Crear un marco para campos de texto
+        # create a frame for the text entry
         text_frame = customtkinter.CTkFrame(master=frame)
         text_frame.pack(pady=6, padx=5, fill="x")
 
@@ -48,21 +52,53 @@ class WeatherApp():
             master=self.weather_frame, text="Weather", font=("Arial", 16))
         label3.pack(pady=1, padx=10)
 
+        # label for city
+        self.label4 = customtkinter.CTkLabel(
+            master=self.weather_frame, text="", font=("Arial", 16))
+        self.label4.pack(pady=1, padx=10)
+        # label for temperature
+        self.label5 = customtkinter.CTkLabel(
+            master=self.weather_frame, text="", font=("Arial", 16))
+        self.label5.pack(pady=1, padx=10)
+        # label for description
+        self.label6 = customtkinter.CTkLabel(
+            master=self.weather_frame, text="", font=("Arial", 16))
+        self.label6.pack(pady=1, padx=10)
+        # create an image
+        self.ctk_image = customtkinter.CTkImage(
+            light_image=self.image, dark_image=self.image, size=(200, 100))
+        # create a label to display the image
+        self.image_label = customtkinter.CTkLabel(
+            master=self.weather_frame, image=self.ctk_image)
+        self.image_label.pack(pady=1, padx=10)
+
+    def generate_label(self, temp, desc, city_name):
+        """Updates the labels with the data from the API"""
+
+        # Update the text in the labels
+        self.label4.configure(text=f"City: {city_name}")
+        self.label5.configure(text=f"Temperature: {temp}ºC")
+        self.label6.configure(text=f"Description: {desc}")
+
     def get_weather(self):
         """Calls the API to get the weather"""
         city_name = self.entry.get()
         if city_name:
-            # Call the API
-            print(f"Getting weather for {city_name}")
-            # Call Generate label function
-            self.generate_label(city_name)
-
-    def generate_label(self, text):
-        """Generates a label with the given text inside weather_frame"""
-
-        label = customtkinter.CTkLabel(
-            master=self.weather_frame, text=text, font=("Arial", 16))
-        label.pack(pady=1, padx=10)
+            try:
+                # Call the API for current weather
+                result = get_current_weather(city_name.lower())
+                # Call the API for forecast
+                result_forecast = get_forecast(city_name.lower())
+                # Get temperature, description and name
+                temperature = result["main"]["temp"]
+                description = result["weather"][0]["description"]
+                name = result["name"]
+                img = result["weather"][0]["icon"]
+                # Call Generate label function
+                self.generate_label(temperature, description, name)
+                icon_image = get_image(img)
+            except Exception as e:
+                print(f"An error occurred: {e}")
 
     def run(self):
         """run the app"""
