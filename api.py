@@ -1,5 +1,8 @@
 import requests
+from PIL import Image
+from CTkMessagebox import CTkMessagebox
 from config import API_KEY, BASE_URL
+from io import BytesIO
 
 
 def build_url(endpoint, params) -> str:
@@ -22,9 +25,8 @@ def make_request(url):
         return response.json()  # Return the JSON data
     except requests.exceptions.HTTPError as http_error:
         print(f"HTTP error occurred: {http_error}")
-        return None
-    except Exception as e:
-        print(f"An error occurred: {e}")
+        CTkMessagebox(title="Error", message="Ciudad no valida",
+                      icon="cancel")
         return None
 
 
@@ -42,11 +44,18 @@ def get_forecast(city):
     return make_request(url)
 
 
-# Example usage
+def get_image(icon):
+    """Updates the image with the data from the API"""
+    url = f"http://openweathermap.org/img/wn/{icon}@2x.png"
+    response = requests.get(url, timeout=10)
+    response.raise_for_status()
+    return Image.open(BytesIO(response.content))
 
-# if __name__ == "__main__":
+
+# Example usage
+if __name__ == "__main__":
     # In Python, constants are typically written in all uppercase
     # letters with underscores separating words, as per PEP 8 style guide
-#    CITY = "Valencia"
-#    print(get_current_weather(CITY))
-#    print(get_forecast(CITY))
+    CITY = "Valencia"
+    print(get_current_weather(CITY))
+    print(get_forecast(CITY))
